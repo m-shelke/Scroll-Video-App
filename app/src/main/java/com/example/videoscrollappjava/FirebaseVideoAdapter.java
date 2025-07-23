@@ -11,42 +11,42 @@ import android.widget.VideoView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 
-public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder> {
+public class FirebaseVideoAdapter extends FirebaseRecyclerAdapter<FirebaseVideo,FirebaseVideoAdapter.FirebaseViewHolder> {
 
-    ArrayList<Video> videoArrayList;
 
-    public VideoAdapter(ArrayList<Video> videoArrayList) {
-        this.videoArrayList = videoArrayList;
+    /**
+     * Initialize a {@link RecyclerView.Adapter} that listens to a Firebase query. See
+     * {@link FirebaseRecyclerOptions} for configuration options.
+     *
+     * @param options
+     */
+    public FirebaseVideoAdapter(@NonNull FirebaseRecyclerOptions<FirebaseVideo> options) {
+        super(options);
+    }
+
+    @Override
+    protected void onBindViewHolder(@NonNull FirebaseViewHolder holder, int position, @NonNull FirebaseVideo model) {
+
+        holder.setData(model);
     }
 
     @NonNull
     @Override
-    public VideoAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
+    public FirebaseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_video,parent,false);
-        return new ViewHolder(view);
+        return new FirebaseViewHolder(view);
     }
 
-    @Override
-    public void onBindViewHolder(@NonNull VideoAdapter.ViewHolder holder, int position) {
+    public static class FirebaseViewHolder extends RecyclerView.ViewHolder{
 
-        holder.setData(videoArrayList.get(position));
-    }
-
-    @Override
-    public int getItemCount() {
-        return videoArrayList.size();
-    }
-
-    public static class ViewHolder extends RecyclerView.ViewHolder{
-
-       public VideoView videoView;
+        public VideoView videoView;
         TextView title,description;
         ProgressBar progressBar;
 
-        public ViewHolder(@NonNull View itemView) {
+        public FirebaseViewHolder(@NonNull View itemView) {
             super(itemView);
 
             videoView = itemView.findViewById(R.id.item_videoView);
@@ -55,11 +55,11 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder> 
             progressBar = itemView.findViewById(R.id.item_progressBar);
         }
 
-        void setData(Video video){
+        void setData(FirebaseVideo video){
 
-            videoView.setVideoPath(video.getVideoUrl());
-            title.setText(video.getTitle());
-            description.setText(video.getDesc());
+            videoView.setVideoPath(video.getVideouri());
+            title.setText(video.getName());
+            description.setText(video.getDescription());
 
             videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
@@ -78,6 +78,4 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder> 
             videoView.setKeepScreenOn(true);
         }
     }
-
-
 }
